@@ -53,6 +53,12 @@ variable "enable_dns_support" {
   default     = true
 }
 
+variable "enable_igw" {
+  description = "Should an Internet Gateway be created for the VPC?"
+  type        = bool
+  default     = true
+}
+
 variable "enable_vpn_gateway" {
   description = "Should a VPN Gateway be created in the VPC?"
   type        = bool

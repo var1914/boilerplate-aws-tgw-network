@@ -10,7 +10,6 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
-
 # VPC Configuration Variables
 variable "vpcs" {
   description = "Configuration for all VPCs to be created"
@@ -26,8 +25,25 @@ variable "vpcs" {
     enable_dns_hostnames = bool
     enable_dns_support   = bool
     enable_vpn_gateway   = bool
+    enable_igw           = optional(bool, false)  # Only true for the egress VPC
+    requires_internet    = optional(bool, true)   # Does this VPC need internet access?
     tags                 = map(string)
   }))
+}
+
+# Centralized Egress Configuration
+variable "centralized_egress" {
+  description = "Configuration for centralized egress"
+  type = object({
+    enabled             = bool
+    egress_vpc_key      = string  # Key of the VPC to use as egress point
+    create_igw_routes   = bool    # Whether to create default routes to IGW for other VPCs
+  })
+  default = {
+    enabled           = true
+    egress_vpc_key    = "management"
+    create_igw_routes = true
+  }
 }
 
 # Transit Gateway Configuration
