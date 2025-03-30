@@ -22,3 +22,62 @@ module "vpcs" {
   
   tags        = merge(var.tags, each.value.tags)
 }
+
+# Create Transit Gateway
+module "transit_gateway" {
+  source = "./modules/transit_gateway"
+
+  name                            = var.transit_gateway_config.name
+  description                     = var.transit_gateway_config.description
+  amazon_side_asn                 = var.transit_gateway_config.amazon_side_asn
+  auto_accept_shared_attachments  = var.transit_gateway_config.auto_accept_shared_attachments
+  default_route_table_association = var.transit_gateway_config.default_route_table_association
+  default_route_table_propagation = var.transit_gateway_config.default_route_table_propagation
+  vpn_ecmp_support                = var.transit_gateway_config.vpn_ecmp_support
+  dns_support                     = var.transit_gateway_config.dns_support
+  transit_gateway_cidr_blocks     = var.transit_gateway_config.transit_gateway_cidr_blocks
+  
+  route_tables = var.tgw_route_tables
+  
+  tags        = merge(var.tags, var.transit_gateway_config.tags)
+}
+
+# Create Transit Gateway Attachments
+module "tgw_attachments" {
+  source   = "./modules/transit_gateway_attachment"
+  for_each = var.vpcs
+
+  transit_gateway_id = module.transit_gateway.transit_gateway_id
+  vpc_id             = module.vpcs[each.key].vpc_id
+  subnet_ids         = module.vpcs[each.key].private_subnet_ids
+  
+  # Default to attaching to the route table corresponding to the VPC type
+  # If no matching route table exists, use the default
+  route_table_id = lookup(
+    module.transit_gateway.route_table_ids,
+    each.key,
+    lookup(
+      module.transit_gateway.route_table_ids,
+      "default",
+      null
+    )
+  )
+  
+  # Determine propagation based on VPC type
+  propagate_to_route_tables = local.route_table_propagations[each.key]
+  
+  # For VPCs that need internet access but don't have their own IGW
+  # add a default route to the Transit Gateway for internet traffic
+  vpc_route_table_ids = var.centralized_egress.enabled && each.key != var.centralized_egress.egress_vpc_key && lookup(each.value, "requires_internet", true) ? module.vpcs[each.key].private_route_table_ids : []
+  
+  destination_cidr_block = "0.0.0.0/0"
+  
+  tags = merge(
+    var.tags,
+    each.value.tags,
+    {
+      Name = "tgw-attachment-${each.value.name}"
+    }
+  )
+}
+
