@@ -11,11 +11,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "environment" {
-  description = "Environment name (dev, test, prod, etc.)"
-  type        = string
-}
-
 # VPC Configuration Variables
 variable "vpcs" {
   description = "Configuration for all VPCs to be created"
