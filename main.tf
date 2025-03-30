@@ -81,3 +81,12 @@ module "tgw_attachments" {
   )
 }
 
+# Centralized Internet Egress Configuration
+# Add specific default route in the Transit Gateway to the egress VPC's attachment
+resource "aws_ec2_transit_gateway_route" "internet_egress" {
+  count = var.centralized_egress.enabled ? 1 : 0
+  
+  destination_cidr_block         = "0.0.0.0/0"
+  transit_gateway_attachment_id  = module.tgw_attachments[var.centralized_egress.egress_vpc_key].tgw_attachment_id
+  transit_gateway_route_table_id = module.transit_gateway.default_route_table_id
+}
