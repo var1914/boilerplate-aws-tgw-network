@@ -20,7 +20,6 @@ This module:
 - Sets up a Transit Gateway as the central hub for all network traffic
 - Configures a single Internet Gateway in one VPC for all internet-bound traffic
 - Sets up proper routing so all VPCs can communicate with each other and the internet
-- Implements security best practices with VPC Flow Logs
 
 ## Prerequisites
 
@@ -124,7 +123,6 @@ vpcs = {
 - Centralized internet egress for comprehensive traffic inspection
 - Ability to insert security appliances in the egress VPC
 - Proper segregation of sensitive data environments
-- Simplified compliance reporting with centralized flow logs
 
 **Implementation**:
 ```hcl
@@ -137,13 +135,6 @@ vpcs = {
     enable_igw = true,
     ... 
   }
-}
-
-security_config = {
-  enable_flow_logs = true,
-  flow_logs_retention = 90,
-  enable_network_firewall = true,
-  ...
 }
 ```
 
@@ -196,14 +187,6 @@ Then update the route table associations in `locals.tf`.
 2. Check for any blackhole routes that might be blocking traffic
 3. Verify security groups and NACLs are properly configured
 
-## Security Best Practices
-
-This module follows AWS security best practices:
-
-- VPC Flow Logs for network traffic monitoring
-- Traffic segmentation through Transit Gateway route tables
-- Centralized egress for better traffic inspection
-- No direct internet access from application VPCs
 
 ## Cost Optimization
 
