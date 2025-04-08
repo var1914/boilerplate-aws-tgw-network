@@ -99,3 +99,12 @@ vpcs = {
     }
   }
 }
+
+# Security Configuration
+security_config = {
+  enable_flow_logs          = true
+  flow_logs_retention       = 30
+  enable_transit_gateway_network_manager = true
+  nacl_rules                = {}
+  enable_network_firewall   = false
+}
