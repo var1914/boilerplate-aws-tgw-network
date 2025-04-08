@@ -187,14 +187,14 @@ Then update the route table associations in `locals.tf`.
 2. Check for any blackhole routes that might be blocking traffic
 3. Verify security groups and NACLs are properly configured
 
-### Security Best Practices
+## Security Best Practices
 
 This module follows AWS security best practices:
 
-VPC Flow Logs for network traffic monitoring
-Traffic segmentation through Transit Gateway route tables
-Centralized egress for better traffic inspection
-No direct internet access from application VPCs
+- VPC Flow Logs for network traffic monitoring
+- Traffic segmentation through Transit Gateway route tables
+- Centralized egress for better traffic inspection
+- No direct internet access from application VPCs
 
 
 ## Cost Optimization
