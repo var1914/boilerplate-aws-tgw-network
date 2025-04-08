@@ -90,3 +90,18 @@ resource "aws_ec2_transit_gateway_route" "internet_egress" {
   transit_gateway_attachment_id  = module.tgw_attachments[var.centralized_egress.egress_vpc_key].tgw_attachment_id
   transit_gateway_route_table_id = module.transit_gateway.default_route_table_id
 }
+
+# Configure Security
+module "security" {
+  source = "./modules/security"
+
+  vpcs                     = { for k, v in module.vpcs : k => v.vpc_id }
+  enable_flow_logs         = var.security_config.enable_flow_logs
+  flow_logs_retention      = var.security_config.flow_logs_retention
+  enable_transit_gateway_network_manager = var.security_config.enable_transit_gateway_network_manager
+  transit_gateway_id       = module.transit_gateway.transit_gateway_id
+  nacl_rules               = var.security_config.nacl_rules
+  enable_network_firewall  = var.security_config.enable_network_firewall
+  
+  tags        = var.tags
+}
