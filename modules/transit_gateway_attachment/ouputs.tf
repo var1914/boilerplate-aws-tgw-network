@@ -25,5 +25,5 @@ output "propagation_route_table_ids" {
 
 output "vpc_routes_added" {
   description = "VPC route table IDs that have routes to the Transit Gateway"
-  value       = var.vpc_route_table_ids
+  value       = aws_route.to_tgw[*].id
 }

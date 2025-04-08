@@ -34,9 +34,9 @@ resource "aws_ec2_transit_gateway_route_table_propagation" "this" {
 
 # Add routes from the VPC to the Transit Gateway
 resource "aws_route" "to_tgw" {
-  for_each = toset(var.vpc_route_table_ids)
+  count = length(var.vpc_route_table_ids)
   
-  route_table_id         = each.value
+  route_table_id         = var.vpc_route_table_ids[count.index]
   destination_cidr_block = var.destination_cidr_block
   transit_gateway_id     = var.transit_gateway_id
 }
